@@ -28,8 +28,7 @@ export default function App() {
   return (
     <AptosWalletAdapterProvider
       autoConnect={false}
-      dappConfig={{ network: Network.TESTNET }}
-      optInWallets={["Petra", "Pontem Wallet", "Martian Wallet", "OKX Wallet"]}
+      dappConfig={{ network: Network.TESTNET as any }}
       onError={console.error}
     >
       <AuthProvider>
@@ -37,24 +36,10 @@ export default function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
-              <Route
-                path="/"
-                element={
-                  <Layout>
-                    <FeedPage />
-                  </Layout>
-                }
-              />
-              <Route
-                path="/profile/:address"
-                element={
-                  <RequireAuth>
-                    <Layout>
-                      <ProfilePage />
-                    </Layout>
-                  </RequireAuth>
-                }
-              />
+              <Route path="/" element={<Layout><FeedPage /></Layout>} />
+              <Route path="/profile/:address" element={
+                <RequireAuth><Layout><ProfilePage /></Layout></RequireAuth>
+              } />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>

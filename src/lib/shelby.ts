@@ -1,9 +1,5 @@
-/**
- * Upload file ke Shelby via /api/upload.
- * - Dev: http://localhost:3000/api/upload  (Vercel CLI)
- * - Prod: https://shelbyx.vercel.app/api/upload  (otomatis)
- * Tidak perlu VITE_BACKEND_URL — /api selalu relatif ke domain yang sama.
- */
+/// <reference types="vite/client" />
+
 export async function uploadToShelby(
   file: File,
   walletAddress: string
@@ -26,8 +22,7 @@ export async function uploadToShelby(
 }
 
 export function shelbyBlobUrl(ownerAddress: string, blobName: string): string {
-  const base =
-    import.meta.env.VITE_SHELBY_BASE_URL ??
-    "https://api.testnet.shelby.xyz/shelby/v1/blobs";
+  const base = import.meta.env.VITE_SHELBY_BASE_URL
+    ?? "https://api.testnet.shelby.xyz/shelby/v1/blobs";
   return `${base}/${ownerAddress}/${encodeURIComponent(blobName)}`;
 }

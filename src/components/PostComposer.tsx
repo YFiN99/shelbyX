@@ -25,7 +25,7 @@ export default function PostComposer() {
   const canPost   = content.trim().length > 0 && remaining >= 0 && !uploading;
 
   async function handleSubmit() {
-    if (!canPost) return;
+    if (!canPost || !user) return;
     setError("");
     setUploading(true);
 
@@ -35,14 +35,11 @@ export default function PostComposer() {
       let mediaType: Post["mediaType"];
 
       if (file && account) {
-        // Upload ke backend — tidak perlu private key di frontend
         const result = await uploadToShelby(file, account.address.toString());
         mediaUrl  = result.url;
         blobName  = result.blobName;
-        mediaType = file.type.startsWith("image/")
-          ? "image"
-          : file.type.startsWith("video/")
-          ? "video"
+        mediaType = file.type.startsWith("image/") ? "image"
+          : file.type.startsWith("video/") ? "video"
           : "pdf";
       }
 
@@ -63,8 +60,9 @@ export default function PostComposer() {
       addPost(post);
       setContent("");
       setFile(null);
-    } catch (err: any) {
-      setError(err?.message ?? "Upload gagal");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Upload gagal";
+      setError(msg);
     } finally {
       setUploading(false);
     }
@@ -99,9 +97,7 @@ export default function PostComposer() {
         <div className="mt-3 flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300">
           <FileText size={14} className="text-brand-400" />
           <span className="flex-1 truncate">{file.name}</span>
-          <span className="text-slate-500 text-xs">
-            {(file.size / 1024 / 1024).toFixed(1)} MB
-          </span>
+          <span className="text-slate-500 text-xs">{(file.size / 1024 / 1024).toFixed(1)} MB</span>
           <button onClick={() => setFile(null)} className="text-slate-500 hover:text-white">
             <X size={14} />
           </button>
@@ -112,30 +108,17 @@ export default function PostComposer() {
 
       <div className="mt-3 flex items-center justify-between">
         <div className="flex gap-1">
-          <button
-            onClick={() => fileRef.current?.click()}
-            className="btn-ghost text-slate-400 hover:text-brand-400"
-            title="Upload media ke Shelby"
-          >
+          <button onClick={() => fileRef.current?.click()}
+            className="btn-ghost text-slate-400 hover:text-brand-400" title="Upload media">
             <ImagePlus size={18} />
           </button>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*,video/*,application/pdf"
-            className="hidden"
-            onChange={handleFile}
-          />
+          <input ref={fileRef} type="file" accept="image/*,video/*,application/pdf"
+            className="hidden" onChange={handleFile} />
         </div>
-
         <div className="flex items-center gap-3">
           <span className={`text-xs tabular-nums ${
-            remaining < 20
-              ? remaining < 0 ? "text-red-400" : "text-amber-400"
-              : "text-slate-500"
-          }`}>
-            {remaining}
-          </span>
+            remaining < 20 ? remaining < 0 ? "text-red-400" : "text-amber-400" : "text-slate-500"
+          }`}>{remaining}</span>
           <button onClick={handleSubmit} disabled={!canPost} className="btn-primary">
             {uploading ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
             {uploading ? (file ? "Mengupload…" : "Memposting…") : "Post"}

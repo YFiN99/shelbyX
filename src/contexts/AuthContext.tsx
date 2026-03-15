@@ -6,7 +6,7 @@ interface AuthContextType {
   user: UserProfile | null;
   isConnected: boolean;
   isLoading: boolean;
-  connect: () => void;
+  connect: (walletName: string) => void;
   disconnect: () => void;
   updateProfile: (patch: Partial<UserProfile>) => void;
 }
@@ -16,12 +16,11 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { account, connected, connect, disconnect } = useWallet();
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
 
   useEffect(() => {
     if (connected && account?.address) {
       const address = account.address.toString();
-      // Load from localStorage or create minimal profile
       const stored = localStorage.getItem(`profile:${address}`);
       if (stored) {
         setUser(JSON.parse(stored));
@@ -49,16 +48,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isConnected: connected,
-        isLoading,
-        connect,
-        disconnect,
-        updateProfile,
-      }}
-    >
+    <AuthContext.Provider value={{
+      user,
+      isConnected: connected,
+      isLoading,
+      connect,
+      disconnect,
+      updateProfile,
+    }}>
       {children}
     </AuthContext.Provider>
   );
