@@ -26,7 +26,22 @@ function getClient() {
   if (_client) return _client;
   const apiKey = process.env.SHELBY_API_KEY;
   if (!apiKey) throw new Error("SHELBY_API_KEY tidak di-set di .env");
-  _client = new ShelbyNodeClient({ network: Network.TESTNET, apiKey });
+  _client = new ShelbyNodeClient({
+    network: "testnet",
+    apiKey,
+    aptos: {
+      network: Network.TESTNET,
+      clientConfig: { API_KEY: apiKey },
+    },
+    rpc: {
+      baseUrl: "https://api.testnet.shelby.xyz/shelby",
+      apiKey,
+    },
+    indexer: {
+      baseUrl: "https://api.testnet.aptoslabs.com/v1/graphql",
+      apiKey,
+    },
+  });
   return _client;
 }
 

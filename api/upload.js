@@ -8,9 +8,22 @@ function getClient() {
   if (_client) return _client;
   const apiKey = process.env.SHELBY_API_KEY;
   if (!apiKey) throw new Error("SHELBY_API_KEY tidak di-set");
+
   _client = new ShelbyNodeClient({
-    network: Network.TESTNET,
+    network: "testnet",
     apiKey,
+    aptos: {
+      network: Network.TESTNET,
+      clientConfig: { API_KEY: apiKey },
+    },
+    rpc: {
+      baseUrl: "https://api.testnet.shelby.xyz/shelby",
+      apiKey,
+    },
+    indexer: {
+      baseUrl: "https://api.testnet.aptoslabs.com/v1/graphql",
+      apiKey,
+    },
   });
   return _client;
 }
@@ -27,17 +40,14 @@ async function parseMultipart(req) {
     const chunks = [];
     let walletAddress = "";
     let fileName = "upload";
-
     req.on("data", (chunk) => chunks.push(chunk));
     req.on("end", () => {
       try {
         const body = Buffer.concat(chunks);
         const boundary = req.headers["content-type"]?.split("boundary=")[1]?.trim();
         if (!boundary) return reject(new Error("No boundary"));
-
         const parts = body.toString("binary").split(`--${boundary}`)
           .filter((p) => p.includes("Content-Disposition"));
-
         let fileBuffer = null;
         for (const part of parts) {
           const [headers, ...rest] = part.split("\r\n\r\n");
