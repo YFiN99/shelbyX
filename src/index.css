@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #0a0b14;
+    color: #e8eaf6;
+    font-family: "DM Sans", sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2940cc44;
+    border-radius: 99px;
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgba(21, 24, 41, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(79, 110, 247, 0.12);
+  }
+
+  .glass-hover {
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .glass-hover:hover {
+    border-color: rgba(79, 110, 247, 0.28);
+    background: rgba(21, 24, 41, 0.9);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-brand-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-slate-400 transition-all duration-200 hover:bg-white/5 hover:text-white active:scale-95;
+  }
+
+  .card {
+    @apply glass glass-hover rounded-2xl p-4;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition focus:border-brand-500/50 focus:ring-2 focus:ring-brand-500/10;
+  }
+
+  .avatar {
+    @apply rounded-full object-cover ring-2 ring-brand-500/20;
+  }
+
+  .tag {
+    @apply inline-flex items-center rounded-full bg-brand-500/10 px-3 py-0.5 text-xs font-medium text-brand-100;
+  }
+}
+
+/* Animated gradient orbs in bg */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+}
